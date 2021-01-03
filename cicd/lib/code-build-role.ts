@@ -24,10 +24,8 @@ export default class CodeBuildRole extends iam.Role {
           effect: iam.Effect.ALLOW,
           actions: ['cloudformation:Describe*'],
           resources: [
-            `arn:aws:cloudformation:eu-west-1:${
-              config.accountIds[stageName]
-            }:stack/*/*`
-          ]
+            `arn:aws:cloudformation:${config.region}:${config.accountIds[stageName]}:stack/*/*`,
+          ],
         })
       )
     })
