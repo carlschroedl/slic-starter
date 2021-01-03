@@ -6,19 +6,16 @@ import StageName from './stage-name'
 export default class CodeBuildRole extends iam.Role {
   constructor(scope: Construct, name: string) {
     super(scope, name, {
-      assumedBy: new iam.ServicePrincipal('codebuild.amazonaws.com')
+      assumedBy: new iam.ServicePrincipal('codebuild.amazonaws.com'),
     })
-
-    ;[StageName.stg, StageName.prod].forEach(stageName => {
+    ;[StageName.stg, StageName.prod].forEach((stageName) => {
       this.addToPolicy(
         new iam.PolicyStatement({
           effect: iam.Effect.ALLOW,
           actions: ['sts:AssumeRole'],
           resources: [
-            `arn:aws:iam::${
-              config.accountIds[stageName]
-            }:role/slic-cicd-deployment-role`
-          ]
+            `arn:aws:iam::${config.accountIds[stageName]}:role/slic-cicd-deployment-role`,
+          ],
         })
       )
 
@@ -40,10 +37,8 @@ export default class CodeBuildRole extends iam.Role {
         effect: iam.Effect.ALLOW,
         actions: ['secretsmanager:GetSecretValue'],
         resources: [
-          `arn:aws:secretsmanager:${config.region}:${
-            config.accountIds.cicd
-          }:secret:CICD*`
-        ]
+          `arn:aws:secretsmanager:${config.region}:${config.accountIds.cicd}:secret:CICD*`,
+        ],
       })
     )
 
@@ -51,7 +46,7 @@ export default class CodeBuildRole extends iam.Role {
       new iam.PolicyStatement({
         effect: iam.Effect.ALLOW,
         actions: ['lambda:Get*', 'lambda:List*', 'lambda:CreateFunction'],
-        resources: ['*']
+        resources: ['*'],
       })
     )
 
@@ -65,9 +60,9 @@ export default class CodeBuildRole extends iam.Role {
           'lambda:InvokeFunction',
           'lambda:PublishVersion',
           'lambda:RemovePermission',
-          'lambda:Update*'
+          'lambda:Update*',
         ],
-        resources: [`arn:aws:lambda:${config.region}:*:function:*`]
+        resources: [`arn:aws:lambda:${config.region}:*:function:*`],
       })
     )
 
@@ -76,9 +71,9 @@ export default class CodeBuildRole extends iam.Role {
         effect: iam.Effect.ALLOW,
         actions: [
           'route53:CreateHostedZone',
-          'route53:ChangeResourceRecordSets'
+          'route53:ChangeResourceRecordSets',
         ],
-        resources: ['*']
+        resources: ['*'],
       })
     )
 
@@ -86,7 +81,7 @@ export default class CodeBuildRole extends iam.Role {
       new iam.PolicyStatement({
         effect: iam.Effect.ALLOW,
         actions: ['acm:RequestCertificate'],
-        resources: ['*']
+        resources: ['*'],
       })
     )
 
@@ -97,9 +92,9 @@ export default class CodeBuildRole extends iam.Role {
           'apigateway:GET',
           'apigateway:POST',
           'apigateway:PUT',
-          'apigateway:DELETE'
+          'apigateway:DELETE',
         ],
-        resources: ['arn:aws:apigateway:*::/restapis*']
+        resources: ['arn:aws:apigateway:*::/restapis*'],
       })
     )
 
@@ -112,9 +107,9 @@ export default class CodeBuildRole extends iam.Role {
           'iam:CreateRole',
           'iam:PutRolePolicy',
           'iam:DeleteRolePolicy',
-          'iam:DeleteRole'
+          'iam:DeleteRole',
         ],
-        resources: ['arn:aws:iam::*:role/*']
+        resources: ['arn:aws:iam::*:role/*'],
       })
     ) // TODO - Change to specific Lambda roles?
 
@@ -122,7 +117,7 @@ export default class CodeBuildRole extends iam.Role {
       new iam.PolicyStatement({
         effect: iam.Effect.ALLOW,
         actions: ['sqs:*'],
-        resources: ['arn:aws:sqs:*:*:*']
+        resources: ['arn:aws:sqs:*:*:*'],
       })
     )
 
@@ -133,9 +128,9 @@ export default class CodeBuildRole extends iam.Role {
           'logs:CreateLogGroup',
           'logs:CreateLogStream',
           'logs:DeleteLogGroup',
-          'logs:PutLogEvents'
+          'logs:PutLogEvents',
         ],
-        resources: [`arn:aws:logs:${config.region}:*:log-group:*`]
+        resources: [`arn:aws:logs:${config.region}:*:log-group:*`],
       })
     ) // TODO - specific log groups
 
@@ -143,7 +138,7 @@ export default class CodeBuildRole extends iam.Role {
       new iam.PolicyStatement({
         effect: iam.Effect.ALLOW,
         actions: ['events:Put*', 'events:Remove*', 'events:Delete*'],
-        resources: [`arn:aws:events:${config.region}:*:rule/*`]
+        resources: [`arn:aws:events:${config.region}:*:rule/*`],
       })
     ) // TODO - specific events
   }
